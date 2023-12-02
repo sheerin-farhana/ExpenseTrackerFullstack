@@ -1,5 +1,5 @@
 const { User } = require('../models/User');
-
+const bcrypt = require('bcrypt');
 
 
 const signup = async (req, res, next) => {
@@ -19,17 +19,17 @@ const signup = async (req, res, next) => {
             res.status(403).json({ data: true });
             return;
         }
-            // create new user if email is unique
-        const newUserData = await User.create({
-            "Name": name,
-            "Email": email,
-            "Phone": phone,
-            "Password": password,
-        });
-        res.status(200).json({ data:newUserData.dataValues });
-        
 
-        
+        bcrypt.hash(password, 10, async (err, hash) => {
+            // create new user if email is unique
+            const newUserData = await User.create({
+                "Name": name,
+                "Email": email,
+                "Phone": phone,
+                "Password": hash,
+            });
+            res.status(200).json({ data: newUserData.dataValues });
+        });
     }
     catch (err) {
         console.error(err);
@@ -52,16 +52,16 @@ const login = async (req, res, next) => {
         });
 
         if (user) {
-            const isMatch = password === user.Password;
+            const isMatch = await bcrypt.compare(password, user.Password);
 
             if (isMatch) {
                 res.status(200).json({ success: true, message: "User login successful" });
             } else {
-                res.status(200).json({ success: false, message: "User  not authorized" });
+                res.status(400).json({ success: false, message: "Password  does not match" });
             }
         }
         else {
-            res.status(404).json({ success: false, message: "User not found" });
+            res.status(404).json({ success: false, message: "Emaild does not exist" });
         }
 
     }
@@ -69,7 +69,6 @@ const login = async (req, res, next) => {
         console.log(err);
         res.status(500).json({ message: "Internal server error" });
     }
-
 }
 
 function isStringValid(data) {
@@ -81,4 +80,4 @@ function isStringValid(data) {
     }
 }
 
-module.exports = { signup,login };
+module.exports = { signup, login };
