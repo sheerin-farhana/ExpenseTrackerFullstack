@@ -20,8 +20,9 @@ loginBtn.addEventListener('click',async (e) => {
         try {
             const userDetails = await axios.post('http://localhost:3000/users/login', loginData);
 
-            if (userDetails.data.success === true) {
+            if (userDetails.data.success) {
                 alert(userDetails.data.message);
+                window.location.href = '../Expense/expense.html';
             }
             else {
                 alert(userDetails.data.message);

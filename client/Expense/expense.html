@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:ital,wght@0,400;0,500;1,400&family=Space+Mono&display=swap"
+        rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display+SC:wght@400;700;900&display=swap"
+        rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./expense.css">
+</head>
+
+<body>
+    <nav>
+        <header
+            class="fixed-top text-white mb-sm-5 d-flex flex-wrap align-items-center justify-content-center  header justify-content-lg-start " id="header" style="background-color: #34495e ;">
+            <div class="container">
+                <p class="text-center fs-1 m-0 pr-3 fw-bold" id="expense-logo">ExpenseTracker</p>
+                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start ">
+
+
+                    <ul class="nav col-12 col-lg-auto me-lg-auto mb-1 justify-content-center mb-md-0" id="nav-links">
+                        <li><a href="#" class="nav-link px-2 text-white fs-4 ">Home</a></li>
+                        <li><a href="#" class="nav-link px-2 text-white fs-4">About</a></li>
+                    </ul>
+                    <div class="text-end d-flex align-items-center mb-4" id="buttons">
+                        <!-- <button type="button" class="btn m-2" style="background-color: #3498db;" id="nav-login-btn">Login</button>
+                        <button type="button" class="btn m-2" id="nav-signup-btn" style="background-color: #2ecc71 ;">Sign-up</button> -->
+                        
+                        <div id="leaderboard-container" class="m-3" style="text-align: center;"></div>
+                        <button type="button" class="btn m-2" style="background-color: #e74c3c ;" id="nav-signout-btn">Sign-out</button>
+                    
+                        
+                    </div>
+                    
+                </div>
+            </div>
+        </header>
+    </nav>
+    
+    <div class="container mt-sm-5">
+        <div class="row">
+            <div class="col-md-10 offset-md-1 ">
+                <div class="expense-form">
+                    <h2 class="mb-4">Add Expense</h2>
+                    <form id="expenseForm">
+                        <div class="mb-3">
+                            <label for="amount" class="form-label">Expense Amount</label>
+                            <input type="number" class="form-control" id="amount" name="amount" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Category</label>
+                            <select class="form-select" id="category" name="category" required>
+                                <option value="food">Food</option>
+                                <option value="transportation">Transportation</option>
+                                <option value="housing">Housing</option>
+                                <option value="entertainment">Entertainment</option>
+                                <option value="shopping">Shopping</option>
+                                <!-- Add more categories as needed -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" rows="3" name="description"></textarea>
+                        </div>
+                        <button type="button" class="btn btn-success" id="add-expense-btn">Add Expense</button>
+                    </form>
+                </div>
+                
+                <div class="expense-list">
+                    <h2 class="mt-4">Expense List</h2>
+                    <div id="expenseList"></div>
+                    <div class="total-amount" id="totalAmount">Total Amount: $0</div>
+                </div>
+
+                
+            </div>
+        </div>
+    </div>
+    
+
+   
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+    <script src="./expense.js"></script>
+</body>
+
+</html>
