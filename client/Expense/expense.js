@@ -14,18 +14,24 @@ addExpenseBtn.addEventListener("click", async function (e) {
 
 async function addExpense(expenseObject) {
     try {
+        const token = localStorage.getItem('token');
         const { amount, category, description } = expenseObject;
         const expense = await axios.post('http://localhost:3000/expense/insertExpense',
             {
                 amount,
                 category,
                 description,
+            },
+            {
+                headers: {
+                    Authorization: 'Bearer ' + token //the token is a variable which holds the token
+                }
             });
         
         const expenseId = expense.data.data.id;
         if (expense.status === 200) {
             addExpenseToUi({ ...expenseObject, id:expenseId });
-            updateTotalAmount();
+            updateTotalAmount(token);
         } else {
             console.log("Response status", expense.status);
         }
@@ -60,12 +66,16 @@ function addExpenseToUi(expenseObject) {
     document.getElementById('expenseForm').reset();
 }
 
-async function updateTotalAmount() {
+async function updateTotalAmount(token) {
 
     let totalAmount = 0;
     const totalAmountInput = document.querySelector('#totalAmount');
 
-    const expenses = await axios.get('http://localhost:3000/expense/getExpense');
+    const expenses = await axios.get('http://localhost:3000/expense/getExpense', {
+        headers: {
+            Authorization: 'Bearer ' + token //the token is a variable which holds the token
+        }
+    });
     const expenseData = expenses.data.expense;
 
     expenseData.forEach(expense => {
@@ -79,7 +89,12 @@ async function updateTotalAmount() {
 document.addEventListener("DOMContentLoaded", async () => {
 
     try {
-        const expenses = await axios.get('http://localhost:3000/expense/getExpense');
+        const token = localStorage.getItem('token');
+        const expenses = await axios.get('http://localhost:3000/expense/getExpense',{
+            headers: {
+                Authorization: 'Bearer ' + token //the token is a variable which holds the token
+            }
+        });
 
         const expenseData = expenses.data.expense;
 
@@ -93,7 +108,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             addExpenseToUi({ id, amount, category, description });
 
         });
-        updateTotalAmount();
+        updateTotalAmount(token);
     }
     catch (err) {
         console.log('Error fetching expenses:', err);
@@ -103,6 +118,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function deleteExpense(button) {
     const expenseId = button.getAttribute('data-id');
+    const token = localStorage.getItem('token');
 
     if (!expenseId) {
         console.error('Expense ID is undefined.');
@@ -110,7 +126,11 @@ async function deleteExpense(button) {
     }
 
     try {
-        const response = await axios.post(`http://localhost:3000/expense/deleteExpense/${expenseId}`);
+        const response = await axios.post(`http://localhost:3000/expense/deleteExpense/${expenseId}`,null,{
+            headers: {
+                Authorization: 'Bearer ' + token //the token is a variable that holds the token
+            }
+        });
 
         if (response.status !== 200) {
             // Handle the case where the delete request was not successful
@@ -119,7 +139,7 @@ async function deleteExpense(button) {
             return;
         }
 
-        updateTotalAmount();
+        updateTotalAmount(token);
 
         // Remove the parent expense item when the delete request is successful
         button.parentNode.remove();

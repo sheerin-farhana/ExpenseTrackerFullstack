@@ -3,13 +3,16 @@ const { Expense } = require('../models/Expense');
 
 const insertExpense = async (req, res, next) => {
     const { amount, category, description } = req.body;
+    
 
     try {
         const expense = await Expense.create({
             ExpenseAmt: amount,
             Category: category,
             Description: description,
+            UserId: req.user.id,
         });
+        console.log(req.user.id,'USER ID');
         res.status(200).json({ success: true, data:expense.dataValues});
     }
     catch (err) {
@@ -21,7 +24,7 @@ const insertExpense = async (req, res, next) => {
 const getExpenses = async (req, res, next) => {
 
     try {
-        const expenses = await Expense.findAll();
+        const expenses = await Expense.findAll({where : {UserId : req.user.id}});
         res.status(200).json({ success: true, expense: expenses }); 
     }
     catch (err) {
@@ -37,6 +40,7 @@ const deleteExpense = async (req, res, next) => {
         const expense = await Expense.findOne({
             where: {
                 id: id,
+                UserId:req.user.id,
             }
         });
 

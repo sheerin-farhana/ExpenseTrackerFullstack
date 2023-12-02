@@ -46,6 +46,8 @@ signupBtn.addEventListener('click',async (e) => {
         phoneInput.value = "";
         passwordInput.value = "";
         confirmPasswordInput.value = "";
+
+        window.location.href = '../Login/login.html';
         
     }
         

@@ -1,5 +1,7 @@
 const { User } = require('../models/User');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const { use } = require('../routes/user');
 
 
 const signup = async (req, res, next) => {
@@ -37,6 +39,10 @@ const signup = async (req, res, next) => {
     }
 };
 
+function generateAccessToken(id,name) {
+    return jwt.sign({ userId: id ,name:name}, process.env.TOKEN);
+}
+
 const login = async (req, res, next) => {
     const { email, password } = req.body;
 
@@ -55,7 +61,7 @@ const login = async (req, res, next) => {
             const isMatch = await bcrypt.compare(password, user.Password);
 
             if (isMatch) {
-                res.status(200).json({ success: true, message: "User login successful" });
+                res.status(200).json({ success: true, message: "User login successful" ,token:generateAccessToken(user.id,user.Name)});
             } else {
                 res.status(400).json({ success: false, message: "Password  does not match" });
             }

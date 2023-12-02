@@ -22,6 +22,7 @@ loginBtn.addEventListener('click',async (e) => {
 
             if (userDetails.data.success) {
                 alert(userDetails.data.message);
+                localStorage.setItem('token', userDetails.data.token);
                 window.location.href = '../Expense/expense.html';
             }
             else {
