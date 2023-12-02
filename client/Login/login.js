@@ -18,8 +18,14 @@ loginBtn.addEventListener('click',async (e) => {
     }
     else {
         try {
-            const userDetails = await axios.post('',loginData);
-            
+            const userDetails = await axios.post('http://localhost:3000/users/login', loginData);
+
+            if (userDetails.data.success === true) {
+                alert(userDetails.data.message);
+            }
+            else {
+                alert(userDetails.data.message);
+            }
             
         }
         catch (err) {
