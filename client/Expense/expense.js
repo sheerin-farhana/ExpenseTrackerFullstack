@@ -5,6 +5,7 @@ const buyPremiumBtn = document.getElementById('buy-premium-btn');
 function showPremiumFeature() {
     const buyPremiumBtn = document.getElementById('buy-premium-btn');
     const premiumUserContainer = document.getElementById('premium-user-container');
+    const premiumContainer = document.getElementById('premium-container');
 
     buyPremiumBtn.style.display = 'none';
     premiumUserContainer.innerText = "YOU ARE A PREMIUM USER";
@@ -12,7 +13,86 @@ function showPremiumFeature() {
     premiumUserContainer.style.fontSize = "18px";
     premiumUserContainer.style.fontWeight = 'Bold';
 
+    const showLeaderboardBtn = document.createElement('button');
+    showLeaderboardBtn.classList.add('btn');
+    showLeaderboardBtn.style.backgroundColor = '#2ecc71';
+    showLeaderboardBtn.textContent = 'Show Leaderboard';
+
+    
+
+    // Modify the showLeaderboardBtn event listener
+showLeaderboardBtn.addEventListener('click', async () => {
+    try {
+        // Fetch data from the "/leaderboard/api" endpoint
+        const response = await axios.get('http://localhost:3000/premium/showLeaderboard');
+        const leaderboardData = response.data;
+
+        // Create the leaderboard modal dynamically
+        const leaderboardModal = document.createElement('div');
+        leaderboardModal.innerHTML = `
+            <div class="modal fade" id="leaderboardModal" tabindex="-1" role="dialog" aria-labelledby="leaderboardModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="leaderboardModalLabel">Leaderboard</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Rank</th>
+                                        <th scope="col">User</th>
+                                        <th scope="col">Total Expense</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${renderLeaderboardRows(leaderboardData)}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(leaderboardModal);
+
+        // Show the modal
+        $('#leaderboardModal').modal('show');
+    } catch (error) {
+        console.error('Error fetching leaderboard data:', error);
+    }
+});
+
+// Helper function to render leaderboard rows
+function renderLeaderboardRows(data) {
+    return data.map((entry, index) => `
+        <tr>
+            <th scope="row">${index + 1}</th>
+            <td>${entry.name}</td>
+            <td>${entry.totalCost}</td>
+        </tr>
+    `).join('');
 }
+
+
+    premiumContainer.appendChild(showLeaderboardBtn);
+
+}
+
+const isPremiumUser = localStorage.getItem('isPremiumUser');
+console.log(isPremiumUser);
+
+if (isPremiumUser != "null" && isPremiumUser) {
+    showPremiumFeature();
+}
+
+
 
 const addExpenseBtn = document.querySelector('#add-expense-btn');
 
@@ -40,10 +120,10 @@ async function addExpense(expenseObject) {
                     Authorization: 'Bearer ' + token //the token is a variable which holds the token
                 }
             });
-        
+
         const expenseId = expense.data.data.id;
         if (expense.status === 200) {
-            addExpenseToUi({ ...expenseObject, id:expenseId });
+            addExpenseToUi({ ...expenseObject, id: expenseId });
             updateTotalAmount(token);
         } else {
             console.log("Response status", expense.status);
@@ -101,9 +181,11 @@ async function updateTotalAmount(token) {
 
 document.addEventListener("DOMContentLoaded", async () => {
 
+
+
     try {
         const token = localStorage.getItem('token');
-        const expenses = await axios.get('http://localhost:3000/expense/getExpense',{
+        const expenses = await axios.get('http://localhost:3000/expense/getExpense', {
             headers: {
                 Authorization: 'Bearer ' + token //the token is a variable which holds the token
             }
@@ -139,7 +221,7 @@ async function deleteExpense(button) {
     }
 
     try {
-        const response = await axios.post(`http://localhost:3000/expense/deleteExpense/${expenseId}`,null,{
+        const response = await axios.post(`http://localhost:3000/expense/deleteExpense/${expenseId}`, null, {
             headers: {
                 Authorization: 'Bearer ' + token //the token is a variable that holds the token
             }
@@ -188,24 +270,24 @@ document.getElementById('buy-premium-btn').onclick = async function (e) {
             });
 
             alert("You are a premium user");
+            showPremiumFeature();
 
-            
-         },
+        },
     };
     const rzp1 = new Razorpay(options);
     rzp1.open();
     e.preventDefault();
- 
+
     rzp1.on('payment.failed', async function (response) {
         console.log(response);
         await axios.post('http://localhost:3000/purchase/updatetransactionstatus', {
-        order_id: options.order_id,
-        payment_id: null, // Indicate payment failure
-    }, {
-        headers: {
-            Authorization: 'Bearer ' + token
-        }
-    });
+            order_id: options.order_id,
+            payment_id: null, // Indicate payment failure
+        }, {
+            headers: {
+                Authorization: 'Bearer ' + token
+            }
+        });
         alert("Something went wrong");
     });
 

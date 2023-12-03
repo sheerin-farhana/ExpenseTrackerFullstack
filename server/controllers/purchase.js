@@ -46,7 +46,7 @@ const updateTransactionStatus = async (req, res) => {
             return res.status(202).json({ success: false, message: "Payment failed" });
         }
             const promise1 = order.update({ Paymentid: payment_id, Status: 'SUCCESSFUL' });
-
+ 
             const promise2 = req.user.update({ Ispremiumuser: true });
             
             Promise.all([promise1, promise2]).then(() => {

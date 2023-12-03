@@ -61,7 +61,7 @@ const login = async (req, res, next) => {
             const isMatch = await bcrypt.compare(password, user.Password);
 
             if (isMatch) {
-                res.status(200).json({ success: true, message: "User login successful" ,token:generateAccessToken(user.id,user.Name)});
+                res.status(200).json({ success: true, message: "User login successful" ,token:generateAccessToken(user.id,user.Name),isPremiumUser:user.Ispremiumuser});
             } else {
                 res.status(400).json({ success: false, message: "Password  does not match" });
             }
