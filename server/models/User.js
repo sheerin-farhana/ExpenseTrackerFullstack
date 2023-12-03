@@ -25,6 +25,7 @@ const User = sequelize.define('Users', {
         type: Sequelize.STRING,
         allowNull:false,
     },
+    Ispremiumuser: Sequelize.BOOLEAN,
 });
 
 

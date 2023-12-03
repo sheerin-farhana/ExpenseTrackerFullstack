@@ -1,5 +1,18 @@
 let totalAmount = 0;
 
+const buyPremiumBtn = document.getElementById('buy-premium-btn');
+
+function showPremiumFeature() {
+    const buyPremiumBtn = document.getElementById('buy-premium-btn');
+    const premiumUserContainer = document.getElementById('premium-user-container');
+
+    buyPremiumBtn.style.display = 'none';
+    premiumUserContainer.innerText = "YOU ARE A PREMIUM USER";
+    premiumUserContainer.style.color = 'white';
+    premiumUserContainer.style.fontSize = "18px";
+    premiumUserContainer.style.fontWeight = 'Bold';
+
+}
 
 const addExpenseBtn = document.querySelector('#add-expense-btn');
 
@@ -150,3 +163,56 @@ async function deleteExpense(button) {
         alert('Error deleting expense. Please try again.');
     }
 }
+
+
+document.getElementById('buy-premium-btn').onclick = async function (e) {
+    const token = localStorage.getItem('token');
+    const response = await axios.get('http://localhost:3000/purchase/premiummembership', {
+        headers: {
+            Authorization: 'Bearer ' + token
+        }
+    });
+
+    var options =
+    {
+        "key": response.data.key_id,
+        "order_id": response.data.order.id,
+        "handler": async function (response) {
+            await axios.post('http://localhost:3000/purchase/updatetransactionstatus', {
+                order_id: options.order_id,
+                payment_id: response.razorpay_payment_id,
+            }, {
+                headers: {
+                    Authorization: 'Bearer ' + token
+                }
+            });
+
+            alert("You are a premium user");
+
+            
+         },
+    };
+    const rzp1 = new Razorpay(options);
+    rzp1.open();
+    e.preventDefault();
+ 
+    rzp1.on('payment.failed', async function (response) {
+        console.log(response);
+        await axios.post('http://localhost:3000/purchase/updatetransactionstatus', {
+        order_id: options.order_id,
+        payment_id: null, // Indicate payment failure
+    }, {
+        headers: {
+            Authorization: 'Bearer ' + token
+        }
+    });
+        alert("Something went wrong");
+    });
+
+}
+
+document.getElementById('nav-signout-btn').addEventListener("click", (e) => {
+    e.preventDefault();
+    // alert("its working");
+    window.location.href = '../Login/login.html';
+});
