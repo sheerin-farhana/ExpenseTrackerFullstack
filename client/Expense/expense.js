@@ -34,10 +34,8 @@ showLeaderboardBtn.addEventListener('click', async () => {
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="leaderboardModalLabel">Leaderboard</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                            <h5 class="modal-title" id="leaderboardModalLabel">Leaderboard Table</h5>
+                             
                         </div>
                         <div class="modal-body">
                             <table class="table">
@@ -49,21 +47,27 @@ showLeaderboardBtn.addEventListener('click', async () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    ${renderLeaderboardRows(leaderboardData)}
+                                ${renderLeaderboardRows(leaderboardData)};
+                                   
                                 </tbody>
                             </table>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-secondary close" data-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>
             </div>
         `;
+       
         document.body.appendChild(leaderboardModal);
 
         // Show the modal
-        $('#leaderboardModal').modal('show');
+        // $('#leaderboardModal').modal('show');
+
+
+        const leaderboardModalShow = new bootstrap.Modal(document.getElementById('leaderboardModal'));
+        leaderboardModalShow.show();
     } catch (error) {
         console.error('Error fetching leaderboard data:', error);
     }
@@ -74,7 +78,7 @@ function renderLeaderboardRows(data) {
     return data.map((entry, index) => `
         <tr>
             <th scope="row">${index + 1}</th>
-            <td>${entry.name}</td>
+            <td>${entry.Name}</td>
             <td>${entry.totalCost}</td>
         </tr>
     `).join('');
