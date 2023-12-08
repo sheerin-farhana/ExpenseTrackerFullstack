@@ -1,5 +1,7 @@
 const { Expense } = require('../models/Expense');
 
+const {User } = require('../models/User');
+
 
 const insertExpense = async (req, res, next) => {
     const { amount, category, description } = req.body;
@@ -12,7 +14,16 @@ const insertExpense = async (req, res, next) => {
             Description: description,
             UserId: req.user.id,
         });
-        console.log(req.user.id,'USER ID');
+        
+
+        const user = await User.findOne({
+            where: { id: req.user.id },
+        });
+
+        if (user) {
+            const newTotalExpenses = (parseFloat(user.TotalExpenses) || 0) + parseFloat(amount);
+            await user.update({ TotalExpenses: newTotalExpenses });
+        }
         res.status(200).json({ success: true, data:expense.dataValues});
     }
     catch (err) {

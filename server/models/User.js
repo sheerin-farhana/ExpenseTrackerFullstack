@@ -26,6 +26,7 @@ const User = sequelize.define('Users', {
         allowNull:false,
     },
     Ispremiumuser: Sequelize.BOOLEAN,
+    TotalExpenses: Sequelize.FLOAT,
 });
 
 

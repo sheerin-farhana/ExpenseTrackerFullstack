@@ -29,36 +29,74 @@ showLeaderboardBtn.addEventListener('click', async () => {
 
         // Create the leaderboard modal dynamically
         const leaderboardModal = document.createElement('div');
-        leaderboardModal.innerHTML = `
-            <div class="modal fade" id="leaderboardModal" tabindex="-1" role="dialog" aria-labelledby="leaderboardModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="leaderboardModalLabel">Leaderboard Table</h5>
-                             
-                        </div>
-                        <div class="modal-body">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Rank</th>
-                                        <th scope="col">User</th>
-                                        <th scope="col">Total Expense</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                ${renderLeaderboardRows(leaderboardData)};
-                                   
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary close" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
+        leaderboardModal.innerHTML = `<div class="modal fade" id="leaderboardModal" tabindex="-1" aria-labelledby="leaderboardModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header float-right">
+              <h5 class="modal-title text-center">Leaderboard</h5>
+              <div class="text-right">
+                <i data-dismiss="modal" aria-label="Close" class="fa fa-close"></i>
+              </div>
             </div>
-        `;
+            <div class="modal-body">
+                
+      
+      
+              <div>
+                
+                <table class="table table-bordered ">
+        <thead>
+          <tr class="table-success">
+            <th scope="col">Rank</th>
+            <th scope="col">User</th>
+            <th scope="col">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${renderLeaderboardRows(leaderboardData)};
+        </tbody>
+      </table>
+      
+              </div>
+      
+      
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+        // leaderboardModal.innerHTML = `
+        //     <div class="modal fade .bg-info" id="leaderboardModal" tabindex="-1" role="dialog" aria-labelledby="leaderboardModalLabel" aria-hidden="true">
+        //         <div class="modal-dialog" role="document">
+        //             <div class="modal-content">
+        //                 <div class="modal-header">
+        //                     <h5 class="modal-title" id="leaderboardModalLabel">Leaderboard Table</h5>
+                             
+        //                 </div>
+        //                 <div class="modal-body ">
+        //                     <table class="table">
+        //                         <thead>
+        //                             <tr>
+        //                                 <th scope="col">Rank</th>
+        //                                 <th scope="col">User</th>
+        //                                 <th scope="col">Total Expense</th>
+        //                             </tr>
+        //                         </thead>
+        //                         <tbody>
+        //                         ${renderLeaderboardRows(leaderboardData)};
+                                   
+        //                         </tbody>
+        //                     </table>
+        //                 </div>
+        //                 <div class="modal-footer">
+        //                     <button type="button" class="btn btn-secondary close" data-dismiss="modal">Close</button>
+        //                 </div>
+        //             </div>
+        //         </div>
+        //     </div>
+        // `;
        
         document.body.appendChild(leaderboardModal);
 
@@ -77,9 +115,9 @@ showLeaderboardBtn.addEventListener('click', async () => {
 function renderLeaderboardRows(data) {
     return data.map((entry, index) => `
         <tr>
-            <th scope="row">${index + 1}</th>
-            <td>${entry.Name}</td>
-            <td>${entry.totalCost}</td>
+            <th class="table-danger" scope="row">${index + 1}</th>
+            <td class="table-info">${entry.Name}</td>
+            <td class="table-warning">${entry.TotalExpenses}</td>
         </tr>
     `).join('');
 }
