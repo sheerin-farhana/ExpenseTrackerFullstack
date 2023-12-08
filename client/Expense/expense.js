@@ -67,36 +67,7 @@ showLeaderboardBtn.addEventListener('click', async () => {
           </div>
         </div>
       </div>`;
-        // leaderboardModal.innerHTML = `
-        //     <div class="modal fade .bg-info" id="leaderboardModal" tabindex="-1" role="dialog" aria-labelledby="leaderboardModalLabel" aria-hidden="true">
-        //         <div class="modal-dialog" role="document">
-        //             <div class="modal-content">
-        //                 <div class="modal-header">
-        //                     <h5 class="modal-title" id="leaderboardModalLabel">Leaderboard Table</h5>
-                             
-        //                 </div>
-        //                 <div class="modal-body ">
-        //                     <table class="table">
-        //                         <thead>
-        //                             <tr>
-        //                                 <th scope="col">Rank</th>
-        //                                 <th scope="col">User</th>
-        //                                 <th scope="col">Total Expense</th>
-        //                             </tr>
-        //                         </thead>
-        //                         <tbody>
-        //                         ${renderLeaderboardRows(leaderboardData)};
-                                   
-        //                         </tbody>
-        //                     </table>
-        //                 </div>
-        //                 <div class="modal-footer">
-        //                     <button type="button" class="btn btn-secondary close" data-dismiss="modal">Close</button>
-        //                 </div>
-        //             </div>
-        //         </div>
-        //     </div>
-        // `;
+        
        
         document.body.appendChild(leaderboardModal);
 
@@ -165,7 +136,7 @@ async function addExpense(expenseObject) {
 
         const expenseId = expense.data.data.id;
         if (expense.status === 200) {
-            addExpenseToUi({ ...expenseObject, id: expenseId });
+            addExpenseToUi(expense.data.data);
             updateTotalAmount(token);
         } else {
             console.log("Response status", expense.status);
@@ -179,7 +150,7 @@ async function addExpense(expenseObject) {
 }
 
 function addExpenseToUi(expenseObject) {
-    const { id, amount, category, description } = expenseObject;
+    const { id, ExpenseAmt, Category, Description } = expenseObject;
 
     // Create a new expense item
     const expenseItem = document.createElement('div');
@@ -188,10 +159,10 @@ function addExpenseToUi(expenseObject) {
 
     // Display the expense details
     expenseItem.innerHTML = `
-        <p><strong>Amount:</strong> $${amount}</p>
-        <p><strong>Category:</strong> ${category}</p>
-        <p><strong>Description:</strong> ${description}</p>
-        <button class="btn btn-danger" onclick="deleteExpense(this, ${amount})" data-id=${id}>Delete</button>
+        <p><strong>Amount:</strong> $${ExpenseAmt}</p>
+        <p><strong>Category:</strong> ${Category}</p>
+        <p><strong>Description:</strong> ${Description}</p>
+        <button class="btn btn-danger" onclick="deleteExpense(this)" data-id=${id}>Delete</button>
     `;
 
     // Append the expense item to the expense list
@@ -234,15 +205,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
 
         const expenseData = expenses.data.expense;
+        
 
         expenseData.forEach(expense => {
-            const amount = expense.ExpenseAmt;
-            const category = expense.Category;
-            const description = expense.Description;
-            const id = expense.id;
-
-            // Call addExpenseToUI with the current totalAmount
-            addExpenseToUi({ id, amount, category, description });
+            console.log(expense);
+            addExpenseToUi(expense);
 
         });
         updateTotalAmount(token);
