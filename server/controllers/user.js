@@ -1,7 +1,15 @@
 const { User } = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { use } = require('../routes/user');
+
+require('dotenv').config();
+const Sib = require('sib-api-v3-sdk');
+const client = Sib.ApiClient.instance;
+client.authentications['api-key'].apiKey = process.env.API_KEY;
+const tranEmailApi = new Sib.TransactionalEmailsApi();
+
+
+
 
 
 const signup = async (req, res, next) => {
@@ -86,4 +94,40 @@ function isStringValid(data) {
     }
 }
 
-module.exports = { signup, login };
+
+const forgotPassword =async (req, res, next) => {
+    try {
+        const { email } = req.body;
+        
+            const sender = {
+                email: 'sheerinfarhana25@gmail.com',
+                name: 'From Expense tracker app'
+            }
+            const receivers = [
+                {
+                    email: email
+                }
+            ]
+            
+        const mailresponse = await tranEmailApi.sendTransacEmail({
+            sender,
+            to: receivers,
+            subject: "Reset Your password",
+            htmlContent: `<h3>You forgot password</h3>`
+        });
+        console.log("email sent");
+            res.status(200).json({ message: 'Password reset email sent' });
+        
+    
+    
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Interenal Server Error' });
+    }
+}
+
+
+
+
+
+module.exports = { signup, login , forgotPassword };
