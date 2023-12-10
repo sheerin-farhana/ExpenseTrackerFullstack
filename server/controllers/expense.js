@@ -81,7 +81,7 @@ const deleteExpense = async (req, res, next) => {
             console.log(user.TotalExpenses,"TotalExpense ");
             
             await user.update({ TotalExpenses: newTotalExpenses },{transaction:transaction});
-        }
+        } 
 
         await expense.destroy();
 

@@ -4,38 +4,34 @@ const passwordInput = document.querySelector('#password-input');
 const loginBtn = document.querySelector('#login-btn');
 const forgotPasswordBtn = document.getElementById('forgot-password-button');
 
-// forgotPasswordBtn.addEventListener("click", async () => {
-//         const forgotPasswordModal = new bootstrap.Modal(document.getElementById('forgot-password-modal'));
-//     forgotPasswordModal.show();
-    
-//     const emailId = document.getElementById('forgot_pass_email');
-//     const saveChanges = document.getElementById('save-changes');
+const modal = document.getElementById('forgot-password-modal');
+const saveChangesBtn = document.getElementById('save-changes');
+        $(saveChangesBtn).on('click', function() {
+            $(modal).modal('hide');
+        });
+          
+const closeModalBtn = document.getElementById('close-btn');
+$(closeModalBtn).on('click', function () {
+    $(modal).modal('hide');
+})
 
-//     saveChanges.addEventListener("click",async (e) => {
-//         e.preventDefault();
-//         const emailData = await axois.post('http://localhost:3000/password/forgotPassword', { email: emailId });
-//         console.log(emailData);
-//         forgotPasswordModal.hide();
-//     })
-    
-    
-
-// });
 
 forgotPasswordBtn.addEventListener("click", async () => {
     const forgotPasswordModal = new bootstrap.Modal(document.getElementById('forgot-password-modal'));
     forgotPasswordModal.show();
 
     const emailId = document.getElementById('forgot_pass_email');
-    const saveChanges = document.getElementById('save-changes');
+    const saveChangesBtn = document.getElementById('save-changes');
 
-    saveChanges.addEventListener("click", async (e) => {
+    saveChangesBtn.addEventListener("click", async (e) => {
         e.preventDefault();
+        
         try {
+            
             const emailData = await axios.post('http://localhost:3000/password/forgotPassword', { email: emailId.value });
             console.log(emailData);
-            const modalInstance = new bootstrap.Modal(document.getElementById('forgot-password-modal'));
-            modalInstance.hide();
+            alert("reset password email Sent");
+            
         } catch (error) {
             console.error(error);
         }
