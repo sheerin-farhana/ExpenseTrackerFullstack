@@ -6,53 +6,7 @@ const bcrypt = require('bcrypt');
 const { User } = require('../models/User');
 const { ForgotPassword } = require('../models/ForgotPassword');
 
-// const forgotpassword = async (req, res) => {
-//     try {
-//         const { email } = req.body;
-//         const user = await User.findOne({
-//             where: {
-//                 Email: email
-//             }
-//         });
 
-//         if (user) {
-//             const id = uuid.v4;
-//             await ForgotPassword.create({
-//                 id,
-//                 UserId: user.id,
-//                 active: true,
-//             });
-
-//             sgmail.setApiKey(process.env.SENDGRID_API_KEY)
-//             const msg = {
-//                 to: email, // Change to your recipient
-//                 from: 'sheerinfarhana25@gmail.com', // Change to your verified sender
-//                 subject: 'Sending with SendGrid is Fun',
-//                 text: 'and easy to do anywhere, even with Node.js',
-//                 html: `<a href="http://localhost:3000/password/resetpassword/${id}">Reset password</a>`,
-//             }
-//             sgMail
-//                 .send(msg)
-//                 .then((response) => {
-//                     console.log('Email sent')
-//                     return res.status(response[0].statusCode).json({message: 'Link to reset password sent to your mail ', sucess: true})
-                    
-//                 })
-//                 .catch((error) => {
-//                     console.error(error)
-//                     throw new Error(error);
-//                 })
-
-//         }
-//         else {
-//             throw new Error('User doesnt exist')
-//         }
-//     }
-//     catch (err) {
-//         console.error(err)
-//         return res.json({ message: err, sucess: false });
-//     }
-// }
 
 const forgotpassword = async (req, res) => {
     try {
@@ -64,7 +18,7 @@ const forgotpassword = async (req, res) => {
         });
 
         if (user) {
-            const id = uuid.v4(); // Corrected line: Call the function to get the UUID string
+            const id = uuid.v4(); 
             await ForgotPassword.create({
                 id,
                 UserId: user.id,
@@ -124,47 +78,7 @@ const resetpassword = (req, res) => {
     })
 }
 
-// const updatepassword = (req, res) => {
 
-//     try {
-//         const { newpassword } = req.query;
-//         const { resetpasswordid } = req.params;
-//         console.log(newpassword);
-//         console.log(resetpasswordid);
-//         ForgotPassword.findOne({ where : { id: resetpasswordid }}).then(resetpasswordrequest => {
-//             User.findOne({where: { id : resetpasswordrequest.userId}}).then(user => {
-//                 // console.log('userDetails', user)
-//                 if(user) {
-//                     //encrypt the password
-
-//                     const saltRounds = 10;
-//                     bcrypt.genSalt(saltRounds, function(err, salt) {
-//                         if(err){
-//                             console.log(err);
-//                             throw new Error(err);
-//                         }
-//                         bcrypt.hash(newpassword, salt, function(err, hash) {
-//                             // Store hash in your password DB.
-//                             if(err){
-//                                 console.log(err);
-//                                 throw new Error(err);
-//                             }
-//                             user.update({ password: hash }).then(() => {
-//                                 res.status(201).json({message: 'Successfuly update the new password'})
-//                             })
-//                         });
-//                     });
-//                     console.log("password updated");
-//             } else{
-//                 return res.status(404).json({ error: 'No user Exists', success: false})
-//             }
-//             })
-//         })
-//     } catch(error){
-//         return res.status(403).json({ error, success: false } )
-//     }
-
-// }
 
 const updatepassword = async (req, res) => {
     try {
@@ -196,7 +110,7 @@ const updatepassword = async (req, res) => {
                             throw new Error(err);
                         }
 
-                        await user.update({ password: hash });
+                        await user.update({ Password: hash });
 
                         res.status(201).json({ message: 'Successfully updated the new password' });
                     });

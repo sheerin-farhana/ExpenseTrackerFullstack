@@ -1,11 +1,86 @@
 let totalAmount = 0;
 
 const buyPremiumBtn = document.getElementById('buy-premium-btn');
-
+const premiumDiv = document.getElementById('premiumdiv');
+const normalDiv = document.getElementById('normaldiv');
 function showPremiumFeature() {
     const buyPremiumBtn = document.getElementById('buy-premium-btn');
     const premiumUserContainer = document.getElementById('premium-user-container');
     const premiumContainer = document.getElementById('premium-container');
+    const downloadReportBtn = document.getElementById('completedownloadbtn');
+
+    downloadReportBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const expenseReport = document.getElementById('expense-report');
+        expenseReport.innerHTML = `<!-- Master Heading -->
+        <h1 class="text-center mb-4">Expense Report</h1>
+    
+        <!-- Monthly Report - March 2023 -->
+        <h2 class="mb-3">Monthly Report - March 2023</h2>
+        <table class="table table-striped table-bordered">
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Expense ($)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Add your monthly expense data here -->
+            <tr>
+                <td>2023-03-01</td>
+                <td>Groceries</td>
+                <td>Food</td>
+                <td>50</td>
+            </tr>
+            <tr>
+                <td>2023-03-05</td>
+                <td>Transportation</td>
+                <td>Travel</td>
+                <td>30</td>
+            </tr>
+            <!-- Add more rows as needed -->
+            </tbody>
+        </table>
+    
+        <!-- Yearly Expenses - 2023 -->
+        <h2 class="mb-3">Yearly Expenses - 2023</h2>
+        <table class="table table-striped table-bordered">
+            <thead>
+            <tr>
+                <th>Month</th>
+                <th>Expenses ($)</th>
+                <th>Income ($)</th>
+                <th>Savings ($)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Add your yearly expense data here -->
+            <tr>
+                <td>January</td>
+                <td>200</td>
+                <td>1000</td>
+                <td>800</td>
+            </tr>
+            <tr>
+                <td>February</td>
+                <td>150</td>
+                <td>1200</td>
+                <td>1050</td>
+            </tr>
+            <!-- Add more rows as needed -->
+            </tbody>
+        </table>`
+
+    })
+
+    premiumDiv.classList.remove('d-none');
+    premiumDiv.classList.add('d-block');
+
+    normalDiv.classList.remove('d-none');
+    normalDiv.classList.add('d-block');
+
 
     buyPremiumBtn.style.display = 'none';
     premiumUserContainer.innerText = "YOU ARE A PREMIUM USER";
@@ -301,6 +376,8 @@ document.getElementById('buy-premium-btn').onclick = async function (e) {
     });
 
 }
+
+
 
 document.getElementById('nav-signout-btn').addEventListener("click", (e) => {
     e.preventDefault();

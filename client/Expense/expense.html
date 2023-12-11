@@ -16,16 +16,17 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display+SC:wght@400;700;900&display=swap"
         rel="stylesheet">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./expense.css">
 </head>
 
 <body>
     <nav>
         <header
-            class="fixed-top text-white mb-sm-5 d-flex flex-wrap align-items-center justify-content-center  header justify-content-lg-start " id="header" style="background-color: #34495e ;">
+            class="fixed-top text-white mb-sm-5 d-flex flex-wrap align-items-center justify-content-center  header justify-content-lg-start "
+            id="header" style="background-color: #34495e ;">
             <div class="container">
                 <p class="text-center fs-1 m-0 pr-3 fw-bold" id="expense-logo">ExpenseTracker</p>
                 <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start ">
@@ -35,73 +36,184 @@
                         <li><a href="#" class="nav-link px-2 text-white fs-4 ">Home</a></li>
                         <li><a href="#" class="nav-link px-2 text-white fs-4">About</a></li>
                     </ul>
-                    <div id="premium-container" class="text-center"><p id="premium-user-container"></p></div>
+                    <div id="premium-container" class="text-center">
+                        <p id="premium-user-container"></p>
+                    </div>
                     <div class="text-end d-flex align-items-center mb-4" id="buttons">
                         <!-- <button type="button" class="btn m-2" style="background-color: #3498db;" id="nav-login-btn">Login</button>
                         <button type="button" class="btn m-2" id="nav-signup-btn" style="background-color: #2ecc71 ;">Sign-up</button> -->
-                        
+
                         <div id="leaderboard-container" class="m-3" style="text-align: center;"></div>
-                        <button type="button" class="btn m-2" style="background-color: #e74c3c ;" id="nav-signout-btn">Sign-out</button>
-                        <button type="button" class="btn m-2" id="buy-premium-btn" style="background-color: #f39c12;">Buy Premium</button>
-                    
-                        
+                        <button type="button" class="btn m-2" style="background-color: #e74c3c ;"
+                            id="nav-signout-btn">Sign-out</button>
+                        <button type="button" class="btn m-2" id="buy-premium-btn"
+                            style="background-color: #f39c12;">Buy Premium</button>
+
+
                     </div>
-                    
+
                 </div>
             </div>
         </header>
     </nav>
-    
-    <div class="container mt-sm-5">
+    <div class="container-fluid mt-3">
         <div class="row">
-            <div class="col-md-10 offset-md-1 ">
-                <div class="expense-form">
-                    <h2 class="mb-4">Add Expense</h2>
-                    <form id="expenseForm">
-                        <div class="mb-3">
-                            <label for="amount" class="form-label">Expense Amount</label>
-                            <input type="number" class="form-control" id="amount" name="amount" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="category" class="form-label">Category</label>
-                            <select class="form-select" id="category" name="category" required>
-                                <option value="food">Food</option>
-                                <option value="transportation">Transportation</option>
-                                <option value="housing">Housing</option>
-                                <option value="entertainment">Entertainment</option>
-                                <option value="shopping">Shopping</option>
-                                <!-- Add more categories as needed -->
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control" id="description" rows="3" name="description"></textarea>
-                        </div>
-                        <button type="button" class="btn btn-success" id="add-expense-btn">Add Expense</button>
-                    </form>
-                </div>
-                
-                <div class="expense-list">
-                    <h2 class="mt-4">Expense List</h2>
-                    <div id="expenseList"></div>
-                    <div class="total-amount" id="totalAmount">Total Amount: $0</div>
+            <!-- Profile Container -->
+            <!--Profile-->
+            <div class="col-md-6 col-xxl-3 mb-3 mb-xxl-0 collapse show" id="profilediv">
+                <div class="card bg-success bg-opacity-50">
+                    <div class="card-header text-center">
+                        <img src="http://randomuser.me/api/portraits/men/11.jpg" class="rounded-circle mb-3" alt="">
+                        <h2 id="namePlaceholder" class="fw-bold">Jacob</h2>
+                        <h5 id="emailPlaceholder">jacob@gmail.com</h5>
+                        <h6 class="text-danger-emphasis lh-1" id="usercategory">Basic user</h6>
+
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            <div class="list-group" id="list-tab" role="tablist">
+                                <a class="list-group-item list-group-item-action active" id="list-leaderboard-list"
+                                    data-bs-toggle="list" href="#list-leaderboard" role="tab"
+                                    aria-controls="list-leaderboard"><i
+                                        class="fas fa-tachometer-alt me-2 text-black"></i>Leaderboard</a>
+                                <a class="list-group-item list-group-item-action" id="list-downloadhistory-list"
+                                    data-bs-toggle="list" href="#list-downloadhistory" role="tab"
+                                    aria-controls="list-downloadhistory"><i
+                                        class="fas fa-list me-2 text-black"></i>Download
+                                    Expenses</a>
+                                <a class="list-group-item list-group-item-action" id="list-messages-list"
+                                    data-bs-toggle="list" href="#list-messages" role="tab"
+                                    aria-controls="list-messages"><i class="fas fa-coins me-2 text-black"></i>
+                                    Income</a>
+                                <a class="list-group-item list-group-item-action" id="list-settings-list"
+                                    data-bs-toggle="list" href="#list-settings" role="tab"
+                                    aria-controls="list-settings"><i class="fas fa-money-bill-wave me-2 text-black"></i>
+                                    Expenses</a>
+                            </div>
+                        </ul>
+                    </div>
+
+
                 </div>
 
-                
+            </div>
+
+            <div class="col-md-6 col-xxl-3 d-none mb-3 mb-xxl-0" id="premiumdiv">
+                <div class="tab-content" id="nav-tabContent">
+
+                    <!--Download Expenses-->
+                    <div class="tab-pane fade " id="list-downloadhistory" role="tabpanel"
+                        aria-labelledby="list-downloadhistory-list">
+                        <div class="card bg-success bg-opacity-75" id="leaderboard">
+                            <div class="card-header d-flex justify-content-between fw-bold p-2 ">
+                                <button class="btn form-control  btn-outline-warning" id="completedownloadbtn">Download
+                                    Expenses
+                                </button>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">
+                        ...income...
+                    </div>
+                    <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">
+                        ...settings...</div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-xxl-3 d-none mb-3 mb-xxl-0" id="normaldiv">
+                <div class="card text-bg-info bg-opacity-75">
+                    <div class="card-header">
+                        <h4 class="text-center">Premium Features</h4>
+                    </div>
+                    <div class="card-body ">
+                        <ul class="list-group list-group">
+                            <li class="list-group-item">1. LeaderBoard</li>
+                            <li class="list-group-item">2. Expense Filter</li>
+                            <li class="list-group-item">3. Expense Reminders and Alerts</li>
+                            <li class="list-group-item">4. Early Access to New Features</li>
+                            <li class="list-group-item">5. Monthly/Yearly Reports</li>
+                            <li class="list-group-item">6. Priority Customer Support</li>
+                            <li class="list-group-item">6.Personalized Financial Advice</li>
+                        </ul>
+                    </div>
+                    <div class="card-footer bg-black text-center">
+                        <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#paymentconfirmation"
+                            aria-controls="paymentconfirmation">
+                            <button class="btn btn-outline-warning rounded-4 fs-5" id="buypremiumbtn">Buy
+                                Premium</button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container mt-5" id="expense-report">
+
+            </div>
+
+            <!-- Expense Container -->
+            <div class="col-md-6 col-xxl-9 w-100">
+                <div class="container mt-sm-5">
+                    <div class="row">
+                        <div class="col-md-10 offset-md-1">
+                            <div class="expense-form">
+                                <h2 class="mb-4">Add Expense</h2>
+                                <form id="expenseForm">
+                                    <div class="mb-3">
+                                        <label for="amount" class="form-label">Expense
+                                            Amount</label>
+                                        <input type="number" class="form-control" id="amount" name="amount" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="category" class="form-label">Category</label>
+                                        <select class="form-select" id="category" name="category" required>
+                                            <option value="food">Food</option>
+                                            <option value="transportation">Transportation</option>
+                                            <option value="housing">Housing</option>
+                                            <option value="entertainment">Entertainment</option>
+                                            <option value="shopping">Shopping</option>
+                                            <!-- Add more categories as needed -->
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="description" class="form-label">Description</label>
+                                        <textarea class="form-control" id="description" rows="3"
+                                            name="description"></textarea>
+                                    </div>
+                                    <button type="button" class="btn btn-success" id="add-expense-btn">Add
+                                        Expense</button>
+                                </form>
+                            </div>
+
+                            <div class="expense-list">
+                                <h2 class="mt-4">Expense List</h2>
+                                <div id="expenseList"></div>
+                                <div class="total-amount" id="totalAmount">Total Amount: $0</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    </div>
+    </div>
+    </div>
 
-    
-    
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
-    
+
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
     <script src="./expense.js"></script>
 </body>
