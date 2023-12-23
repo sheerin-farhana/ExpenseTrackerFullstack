@@ -1,110 +1,105 @@
-let totalAmount = 0;
+// let totalAmount = 0;
 
 const buyPremiumBtn = document.getElementById('buy-premium-btn');
-const premiumDiv = document.getElementById('premiumdiv');
-const normalDiv = document.getElementById('normaldiv');
 function showPremiumFeature() {
-    const buyPremiumBtn = document.getElementById('buy-premium-btn');
+
     const premiumUserContainer = document.getElementById('premium-user-container');
-    const premiumContainer = document.getElementById('premium-container');
-    const downloadReportBtn = document.getElementById('completedownloadbtn');
+    const downloadReportBtn = document.getElementById('download-report--btn');
+    const showDownloadFilesBtn = document.getElementById('show-files-btn');
 
-    downloadReportBtn.addEventListener("click", (e) => {
+    downloadReportBtn.classList.remove('d-none');
+
+
+    downloadReportBtn.addEventListener("click", async (e) => {
         e.preventDefault();
-        const expenseReport = document.getElementById('expense-report');
-        expenseReport.innerHTML = `<!-- Master Heading -->
-        <h1 class="text-center mb-4">Expense Report</h1>
-    
-        <!-- Monthly Report - March 2023 -->
-        <h2 class="mb-3">Monthly Report - March 2023</h2>
-        <table class="table table-striped table-bordered">
-            <thead>
-            <tr>
-                <th>Date</th>
-                <th>Description</th>
-                <th>Category</th>
-                <th>Expense ($)</th>
-            </tr>
-            </thead>
-            <tbody>
-            <!-- Add your monthly expense data here -->
-            <tr>
-                <td>2023-03-01</td>
-                <td>Groceries</td>
-                <td>Food</td>
-                <td>50</td>
-            </tr>
-            <tr>
-                <td>2023-03-05</td>
-                <td>Transportation</td>
-                <td>Travel</td>
-                <td>30</td>
-            </tr>
-            <!-- Add more rows as needed -->
-            </tbody>
-        </table>
-    
-        <!-- Yearly Expenses - 2023 -->
-        <h2 class="mb-3">Yearly Expenses - 2023</h2>
-        <table class="table table-striped table-bordered">
-            <thead>
-            <tr>
-                <th>Month</th>
-                <th>Expenses ($)</th>
-                <th>Income ($)</th>
-                <th>Savings ($)</th>
-            </tr>
-            </thead>
-            <tbody>
-            <!-- Add your yearly expense data here -->
-            <tr>
-                <td>January</td>
-                <td>200</td>
-                <td>1000</td>
-                <td>800</td>
-            </tr>
-            <tr>
-                <td>February</td>
-                <td>150</td>
-                <td>1200</td>
-                <td>1050</td>
-            </tr>
-            <!-- Add more rows as needed -->
-            </tbody>
-        </table>`
+        const token = localStorage.getItem('token');
+        try {
 
+            const response = await axios.get('http://localhost:3000/expense/download', {
+                headers: {
+                    Authorization: 'Bearer ' + token //the token is a variable which holds the token
+                }
+            });
+
+            if (response.status === 200) {
+                var a = document.createElement('a');
+                a.href = response.data.fileURL;
+                a.download = 'myexpense.txt';
+                a.click();
+            }
+        }
+        catch (err) {
+            console.log(err);
+        }
+
+
+    });
+
+    showDownloadFilesBtn.classList.remove('d-none');
+
+    showDownloadFilesBtn.addEventListener('click', async function (e) {
+        e.preventDefault();
+        try {
+            const token = localStorage.getItem('token');
+            const downloadedFilesResponse = await axios.get('http://localhost:3000/expense/filesdownloaded', {
+                headers: {
+                    Authorization: 'Bearer ' + token //the token is a variable which holds the token
+                }
+            });
+            const downloadedFiles = downloadedFilesResponse.data.downloadedExpenses;
+            const expenseReport = document.getElementById('expense-report');
+
+            const tableBody = expenseReport.querySelector('tbody');
+            downloadedFiles.forEach(file => {
+                const row = document.createElement('tr');
+
+                // Assuming each item in downloadedFiles has fileURL and createdAt properties
+                const fileURLCell = document.createElement('td');
+                fileURLCell.textContent = file.fileURL;
+                row.appendChild(fileURLCell);
+
+                const createdAtCell = document.createElement('td');
+                createdAtCell.textContent = file.createdAt; // Adjust the date formatting as needed
+                row.appendChild(createdAtCell);
+
+                // Append the row to the table body
+                tableBody.appendChild(row);
+            });
+
+        }
+        catch (err) {
+            console.log(err);
+            alert('Error => something went wrong line 47');
+        }
     })
 
-    premiumDiv.classList.remove('d-none');
-    premiumDiv.classList.add('d-block');
-
-    normalDiv.classList.remove('d-none');
-    normalDiv.classList.add('d-block');
 
 
     buyPremiumBtn.style.display = 'none';
-    premiumUserContainer.innerText = "YOU ARE A PREMIUM USER";
-    premiumUserContainer.style.color = 'white';
-    premiumUserContainer.style.fontSize = "18px";
+    premiumUserContainer.innerText = "PREMIUM USER";
+    premiumUserContainer.style.color = 'green';
+    premiumUserContainer.style.fontFamily = 'Cinzel';
+    premiumUserContainer.style.fontSize = "24px";
     premiumUserContainer.style.fontWeight = 'Bold';
 
-    const showLeaderboardBtn = document.createElement('button');
+    const showLeaderboardBtn = document.getElementById('show-leaderboard-btn');
+    showLeaderboardBtn.classList.remove('d-none');
     showLeaderboardBtn.classList.add('btn');
     showLeaderboardBtn.style.backgroundColor = '#2ecc71';
     showLeaderboardBtn.textContent = 'Show Leaderboard';
 
-    
+
 
     // Modify the showLeaderboardBtn event listener
-showLeaderboardBtn.addEventListener('click', async () => {
-    try {
-        // Fetch data from the "/leaderboard/api" endpoint
-        const response = await axios.get('http://localhost:3000/premium/showLeaderboard');
-        const leaderboardData = response.data;
+    showLeaderboardBtn.addEventListener('click', async () => {
+        try {
+            // Fetch data from the "/leaderboard/api" endpoint
+            const response = await axios.get('http://localhost:3000/premium/showLeaderboard');
+            const leaderboardData = response.data;
 
-        // Create the leaderboard modal dynamically
-        const leaderboardModal = document.createElement('div');
-        leaderboardModal.innerHTML = `<div class="modal fade" id="leaderboardModal" tabindex="-1" aria-labelledby="leaderboardModalLabel" aria-hidden="true">
+            // Create the leaderboard modal dynamically
+            const leaderboardModal = document.createElement('div');
+            leaderboardModal.innerHTML = `<div class="modal fade" id="leaderboardModal" tabindex="-1" aria-labelledby="leaderboardModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header float-right">
@@ -142,48 +137,38 @@ showLeaderboardBtn.addEventListener('click', async () => {
           </div>
         </div>
       </div>`;
-        
-       
-        document.body.appendChild(leaderboardModal);
-
-        // Show the modal
-        // $('#leaderboardModal').modal('show');
 
 
-        const leaderboardModalShow = new bootstrap.Modal(document.getElementById('leaderboardModal'));
-        leaderboardModalShow.show();
-    } catch (error) {
-        console.error('Error fetching leaderboard data:', error);
-    }
-});
+            document.body.appendChild(leaderboardModal);
 
-// Helper function to render leaderboard rows
-function renderLeaderboardRows(data) {
-    return data.map((entry, index) => `
+            // Show the modal
+            // $('#leaderboardModal').modal('show');
+
+
+            const leaderboardModalShow = new bootstrap.Modal(document.getElementById('leaderboardModal'));
+            leaderboardModalShow.show();
+        } catch (error) {
+            console.error('Error fetching leaderboard data:', error);
+        }
+    });
+
+    // Helper function to render leaderboard rows
+    function renderLeaderboardRows(data) {
+        return data.map((entry, index) => `
         <tr>
             <th class="table-danger" scope="row">${index + 1}</th>
             <td class="table-info">${entry.Name}</td>
             <td class="table-warning">${entry.TotalExpenses}</td>
         </tr>
     `).join('');
+    }
+
+
+    // premiumContainer.appendChild(showLeaderboardBtn);
+
 }
-
-
-    premiumContainer.appendChild(showLeaderboardBtn);
-
-}
-
-const isPremiumUser = localStorage.getItem('isPremiumUser');
-console.log(isPremiumUser);
-
-if (isPremiumUser != "null" && isPremiumUser) {
-    showPremiumFeature();
-}
-
-
 
 const addExpenseBtn = document.querySelector('#add-expense-btn');
-
 addExpenseBtn.addEventListener("click", async function (e) {
     const amount = parseFloat(document.getElementById('amount').value);
     const category = document.getElementById('category').value;
@@ -269,7 +254,12 @@ async function updateTotalAmount(token) {
 
 document.addEventListener("DOMContentLoaded", async () => {
 
+    const isPremiumUser = localStorage.getItem('isPremiumUser');
 
+
+    if (isPremiumUser != "null" && isPremiumUser) {
+        showPremiumFeature();
+    }
 
     try {
         const token = localStorage.getItem('token');
@@ -280,7 +270,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
 
         const expenseData = expenses.data.expense;
-        
+
 
         expenseData.forEach(expense => {
             console.log(expense);

@@ -8,6 +8,7 @@ const {User} = require('./models/User');
 const { Expense } = require('./models/Expense');
 const { Order } = require('./models/Order');
 const { ForgotPassword } = require('./models/ForgotPassword');
+const { DownloadedFile } = require('./models/DownloadedFile');
 
 const userRoutes = require('./routes/user');
 const expenseRoutes = require('./routes/expense');
@@ -33,8 +34,12 @@ Expense.belongsTo(User);
 
 User.hasMany(Order);
 Order.belongsTo(User);
+
 User.hasMany(ForgotPassword);
 ForgotPassword.belongsTo(User);
+
+User.hasMany(DownloadedFile, { foreignKey: 'userId' });
+DownloadedFile.belongsTo(User, { foreignKey: 'userId' });
 
 sequelize
     .sync()

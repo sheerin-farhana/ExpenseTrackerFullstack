@@ -25,4 +25,6 @@ const showLeaderboard = async (req, res, next) =>  {
 
 
 
-module.exports = { showLeaderboard };
+
+
+module.exports = { showLeaderboard  };
