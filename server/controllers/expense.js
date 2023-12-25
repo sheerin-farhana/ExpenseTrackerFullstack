@@ -120,10 +120,10 @@ const downloadExpense = async (req, res) => {
     }
 }
 
-const getDownloadedExpenses =async (req, res) => {
+const getDownloadedExpenses = async (req, res) => {
 
     try {
-        const expenses =await DownloadedFile.findAll({ where: { userId: req.user.id } });
+        const expenses = await DownloadedFile.findAll({ where: { userId: req.user.id } });
 
         console.log(expenses);
         res.status(200).json({ success: true, downloadedExpenses: expenses });
@@ -134,7 +134,34 @@ const getDownloadedExpenses =async (req, res) => {
     }
 }
 
+const getExpensesPerPage = async (req, res, next) => {
+    try {
+        const page = req.query.page;
+        // const user = req.user;
+        const limit = 5;
+        const offset = (page - 1) * limit;
+
+
+        const expenses = await Expense.findAll({
+            where: { userId: req.user.id },
+            offset: offset,
+            limit: limit
+        });
+
+        console.log('EXPENSES LIST',expenses);
+
+        res.status(200).json({
+            expenses: expenses,
+            hasMoreExpenses: expenses.length === limit,
+            hasPreviousExpenses: page > 1
+        });
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(401).json({ message: "Unauthorized relogin required" });
+    }
+}
 
 
 
-module.exports = { insertExpense, getExpenses, deleteExpense, downloadExpense,getDownloadedExpenses};
+module.exports = { insertExpense, getExpenses, deleteExpense, downloadExpense, getDownloadedExpenses,getExpensesPerPage };

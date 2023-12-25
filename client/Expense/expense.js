@@ -1,5 +1,6 @@
 // let totalAmount = 0;
 
+
 const buyPremiumBtn = document.getElementById('buy-premium-btn');
 function showPremiumFeature() {
 
@@ -48,6 +49,7 @@ function showPremiumFeature() {
             });
             const downloadedFiles = downloadedFilesResponse.data.downloadedExpenses;
             const expenseReport = document.getElementById('expense-report');
+            expenseReport.classList.remove('d-none');
 
             const tableBody = expenseReport.querySelector('tbody');
             downloadedFiles.forEach(file => {
@@ -196,8 +198,9 @@ async function addExpense(expenseObject) {
 
         const expenseId = expense.data.data.id;
         if (expense.status === 200) {
-            addExpenseToUi(expense.data.data);
-            updateTotalAmount(token);
+            // addExpenseToUi(expense.data.data);
+            // updateTotalAmount(token);
+            alert("expense added");
         } else {
             console.log("Response status", expense.status);
         }
@@ -225,12 +228,13 @@ function addExpenseToUi(expenseObject) {
         <button class="btn btn-danger" onclick="deleteExpense(this)" data-id=${id}>Delete</button>
     `;
 
-    // Append the expense item to the expense list
-    document.getElementById('expenseList').appendChild(expenseItem);
-
     // Clear the form
     document.getElementById('expenseForm').reset();
+
+    return expenseItem; // Return the expense item
 }
+
+
 
 async function updateTotalAmount(token) {
 
@@ -252,38 +256,116 @@ async function updateTotalAmount(token) {
     totalAmountInput.innerText = `Total Amount: $${totalAmount.toFixed(2)}`;
 }
 
+
 document.addEventListener("DOMContentLoaded", async () => {
 
-    const isPremiumUser = localStorage.getItem('isPremiumUser');
 
+    let hasMoreExpenses = false;
+    let hasPreviousExpenses = false;
+
+    const isPremiumUser = localStorage.getItem('isPremiumUser');
+    const token = localStorage.getItem('token');
 
     if (isPremiumUser != "null" && isPremiumUser) {
         showPremiumFeature();
     }
 
-    try {
-        const token = localStorage.getItem('token');
-        const expenses = await axios.get('http://localhost:3000/expense/getExpense', {
-            headers: {
-                Authorization: 'Bearer ' + token //the token is a variable which holds the token
-            }
-        });
+    const currentPageBtn = document.querySelector('#currentPage');
+    const nextPageBtn = document.querySelector('#nextPage');
+    const prevPageBtn = document.querySelector('#prevPage');
 
-        const expenseData = expenses.data.expense;
+    prevPageBtn.addEventListener('click', onclickprevpage);
+    nextPageBtn.addEventListener('click', onclicknextpage);
 
+    let currentPage = 1;
+    let noitem = 5;
 
-        expenseData.forEach(expense => {
-            console.log(expense);
-            addExpenseToUi(expense);
-
-        });
-        updateTotalAmount(token);
-    }
-    catch (err) {
-        console.log('Error fetching expenses:', err);
+    // Function to handle the click on the "Previous" button
+    async function onclickprevpage() {
+        if (currentPage > 1) {
+            currentPage--;
+            await refresh();
+            updateTotalAmount(token);
+        }
     }
 
+    // Function to handle the click on the "Next" button
+    async function onclicknextpage() {
+        if (hasMoreExpenses) {
+            currentPage++;
+            await refresh();
+            updateTotalAmount(token);
+        }
+    }
+
+    // Function to refresh and fetch expenses based on the current page and limit
+    async function refresh() {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:3000/expense/getexpensesperpage?page=${currentPage}&noitem=${noitem}`, {
+                headers: {
+                    Authorization: 'Bearer ' + token
+                }
+            });
+            console.log("EXPENSE DATA", response.data);
+            showOutput(response.data);
+            updatePageNumber();
+        } catch (err) {
+            console.log(err);
+            alert('Error: Something went wrong');
+        }
+    }
+
+    // Function to update the page number and buttons based on the current state
+    function updatePageNumber() {
+        currentPageBtn.textContent = currentPage;
+        prevPageBtn.disabled = currentPage === 1;
+        nextPageBtn.disabled = !hasMoreExpenses;
+    }
+
+    // Function to show the fetched expenses in the UI
+    // function showOutput(response) {
+    //     hasMoreExpenses = response.hasMoreExpenses;
+    //     hasPreviousExpenses = response.hasPreviousExpenses;
+
+    //     response.expenses.forEach(expense => {
+    //         console.log("seperate expenses", expense);
+
+    //         addExpenseToUi(expense)
+
+    //     });
+        
+    // }
+
+    // Function to show the fetched expenses in the UI
+function showOutput(response) {
+    hasMoreExpenses = response.hasMoreExpenses;
+    hasPreviousExpenses = response.hasPreviousExpenses;
+
+    // Accumulate expense items
+    const expenseItems = [];
+
+    // Assuming you have a function like addExpenseToUi to display the expenses
+    response.expenses.forEach(expense => {
+        const expenseItem = addExpenseToUi(expense);
+        expenseItems.push(expenseItem);
+    });
+
+    // Append all expense items to the expenseList
+    const expenseList = document.getElementById('expenseList');
+    expenseList.innerHTML = ''; // Clear existing expenses
+    expenseItems.forEach(item => expenseList.appendChild(item));
+
+    // Update the page number and buttons based on the current state
+    updatePageNumber();
+}
+
+
+    // Initial load
+    await refresh();
+    updateTotalAmount(token);
 });
+
 
 async function deleteExpense(button) {
     const expenseId = button.getAttribute('data-id');
