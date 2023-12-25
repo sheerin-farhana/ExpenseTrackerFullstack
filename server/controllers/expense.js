@@ -138,7 +138,7 @@ const getExpensesPerPage = async (req, res, next) => {
     try {
         const page = req.query.page;
         // const user = req.user;
-        const limit = 5;
+        const limit = parseInt(req.query.noitem) || 5;
         const offset = (page - 1) * limit;
 
 
@@ -148,7 +148,9 @@ const getExpensesPerPage = async (req, res, next) => {
             limit: limit
         });
 
-        console.log('EXPENSES LIST',expenses);
+        // console.log('EXPENSES LIST',expenses);
+        console.log(limit, "LIMIT");
+        console.log(page,"PAGE NUMBER");
 
         res.status(200).json({
             expenses: expenses,

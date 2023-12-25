@@ -277,8 +277,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     prevPageBtn.addEventListener('click', onclickprevpage);
     nextPageBtn.addEventListener('click', onclicknextpage);
 
+    const noItemSelect = document.getElementById('noiteminpage');
+    noItemSelect.addEventListener('change', onNoItemPerPageChange);
+
+    async function onNoItemPerPageChange() {
+        const selectedValue = document.getElementById('noiteminpage').value;
+        localStorage.setItem('noitemPerPage', selectedValue);
+        
+        await refresh();
+    }
+
     let currentPage = 1;
-    let noitem = 5;
 
     // Function to handle the click on the "Previous" button
     async function onclickprevpage() {
@@ -302,12 +311,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     async function refresh() {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:3000/expense/getexpensesperpage?page=${currentPage}&noitem=${noitem}`, {
+            const noitemPerPage = localStorage.getItem('noitemPerPage') || 5; 
+            const response = await axios.get(`http://localhost:3000/expense/getexpensesperpage?page=${currentPage}&noitem=${noitemPerPage}`, {
                 headers: {
                     Authorization: 'Bearer ' + token
                 }
             });
-            console.log("EXPENSE DATA", response.data);
             showOutput(response.data);
             updatePageNumber();
         } catch (err) {
@@ -315,6 +324,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             alert('Error: Something went wrong');
         }
     }
+    
 
     // Function to update the page number and buttons based on the current state
     function updatePageNumber() {
@@ -323,19 +333,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         nextPageBtn.disabled = !hasMoreExpenses;
     }
 
-    // Function to show the fetched expenses in the UI
-    // function showOutput(response) {
-    //     hasMoreExpenses = response.hasMoreExpenses;
-    //     hasPreviousExpenses = response.hasPreviousExpenses;
-
-    //     response.expenses.forEach(expense => {
-    //         console.log("seperate expenses", expense);
-
-    //         addExpenseToUi(expense)
-
-    //     });
-        
-    // }
 
     // Function to show the fetched expenses in the UI
 function showOutput(response) {
