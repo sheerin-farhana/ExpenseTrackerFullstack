@@ -1,40 +1,43 @@
 // let totalAmount = 0;
 
+function successalert(msg) {
+    const alertDiv = document.getElementById('success-alert');
+    alertDiv.classList.remove("d-none");
+    alertDiv.innerText = msg
+    setTimeout(() => {
+        alertDiv.classList.add("d-none")
+    }, 4000);
+
+}
+
+function failurealert(msg) {
+    const errorAlertDiv = document.getElementById('failure-alert');
+    errorAlertDiv.classList.remove("d-none");
+    errorAlertDiv.innerText = msg;
+    setTimeout(() => {
+        errorAlertDiv.classList.add("d-none");
+    }, 2000);
+}
+
+
+const downloadReportBtn = document.getElementById('download-report--btn');
+
+if (!downloadReportBtn.hasEventListener) {
+    downloadReportBtn.hasEventListener = true;
+    downloadReportBtn.removeEventListener("click", downloadReportHandler); // Remove existing listener
+    downloadReportBtn.addEventListener("click", downloadReportHandler);
+}
+
+
 
 const buyPremiumBtn = document.getElementById('buy-premium-btn');
 function showPremiumFeature() {
 
     const premiumUserContainer = document.getElementById('premium-user-container');
-    const downloadReportBtn = document.getElementById('download-report--btn');
+
     const showDownloadFilesBtn = document.getElementById('show-files-btn');
 
-    downloadReportBtn.classList.remove('d-none');
-
-
-    downloadReportBtn.addEventListener("click", async (e) => {
-        e.preventDefault();
-        const token = localStorage.getItem('token');
-        try {
-
-            const response = await axios.get('http://localhost:3000/expense/download', {
-                headers: {
-                    Authorization: 'Bearer ' + token //the token is a variable which holds the token
-                }
-            });
-
-            if (response.status === 200) {
-                var a = document.createElement('a');
-                a.href = response.data.fileURL;
-                a.download = 'myexpense.txt';
-                a.click();
-            }
-        }
-        catch (err) {
-            console.log(err);
-        }
-
-
-    });
+    // downloadReportBtn.classList.remove('d-none');
 
     showDownloadFilesBtn.classList.remove('d-none');
 
@@ -71,7 +74,7 @@ function showPremiumFeature() {
         }
         catch (err) {
             console.log(err);
-            alert('Error => something went wrong line 47');
+            failurealert("Something went wrong. Please try again.")
         }
     })
 
@@ -170,6 +173,43 @@ function showPremiumFeature() {
 
 }
 
+async function downloadReportHandler(e) {
+    e.preventDefault();
+    // The rest of your downloadReportBtn click handler logic
+    e.preventDefault();
+    const token = localStorage.getItem('token');
+    try {
+
+        const response = await axios.get('http://localhost:3000/expense/download', {
+            headers: {
+                Authorization: 'Bearer ' + token //the token is a variable which holds the token
+            }
+        });
+
+        if (response.status === 200) {
+            var a = document.createElement('a');
+            a.href = response.data.fileURL;
+            a.download = 'myexpense.txt';
+            a.click();
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
+
+
+
+
+}
+
+
+
+const isPremiumUser = localStorage.getItem('isPremiumUser');
+
+if (isPremiumUser != "null" && isPremiumUser) {
+    showPremiumFeature();
+}
+
 const addExpenseBtn = document.querySelector('#add-expense-btn');
 addExpenseBtn.addEventListener("click", async function (e) {
     const amount = parseFloat(document.getElementById('amount').value);
@@ -177,8 +217,16 @@ addExpenseBtn.addEventListener("click", async function (e) {
     const description = document.getElementById('description').value;
 
     // Add the expense
-    await addExpense({ amount, category, description });
+    const addedExpense = await addExpense({ amount, category, description });
+
+    if (addedExpense) {
+        addExpenseToUi(addedExpense);
+    }
+
+
 });
+
+
 
 async function addExpense(expenseObject) {
     try {
@@ -198,19 +246,23 @@ async function addExpense(expenseObject) {
 
         const expenseId = expense.data.data.id;
         if (expense.status === 200) {
-            // addExpenseToUi(expense.data.data);
-            // updateTotalAmount(token);
-            alert("expense added");
+            successalert("Expense Added");
+
+            // Check if the number of displayed expenses is within the limit
+            const expenseList = document.getElementById('expenseList');
+
+            await updateTotalAmount(token);
+            return expense.data.data; // Return the added expense
         } else {
             console.log("Response status", expense.status);
         }
-
-    }
-    catch (err) {
-        console.log('Error adding expense:', err);
-        alert('Error adding expense. Please try again.');
+    } catch (err) {
+        // console.log('Error adding expense:', err);
+        failurealert("Error adding expense. Please try again");
+        // alert('Error adding expense. Please try again.');
     }
 }
+
 
 function addExpenseToUi(expenseObject) {
     const { id, ExpenseAmt, Category, Description } = expenseObject;
@@ -227,6 +279,17 @@ function addExpenseToUi(expenseObject) {
         <p><strong>Description:</strong> ${Description}</p>
         <button class="btn btn-danger" onclick="deleteExpense(this)" data-id=${id}>Delete</button>
     `;
+
+    const currentPage = parseInt(document.getElementById('currentPage').textContent);
+    const noitemPerPage = document.getElementById('noiteminpage') || 5;
+    const startIndex = (currentPage - 1) * noitemPerPage;
+    const endIndex = startIndex + noitemPerPage;
+    const expenseItems = document.querySelectorAll('.expense-item');
+    
+    if (noitemPerPage <= expenseItems.length ) {
+        const expenseList = document.getElementById('expenseList');
+        expenseList.appendChild(expenseItem);
+    }
 
     // Clear the form
     document.getElementById('expenseForm').reset();
@@ -283,7 +346,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     async function onNoItemPerPageChange() {
         const selectedValue = document.getElementById('noiteminpage').value;
         localStorage.setItem('noitemPerPage', selectedValue);
-        
+
         await refresh();
     }
 
@@ -311,7 +374,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     async function refresh() {
         try {
             const token = localStorage.getItem('token');
-            const noitemPerPage = localStorage.getItem('noitemPerPage') || 5; 
+            const noitemPerPage = localStorage.getItem('noitemPerPage') || 5;
             const response = await axios.get(`http://localhost:3000/expense/getexpensesperpage?page=${currentPage}&noitem=${noitemPerPage}`, {
                 headers: {
                     Authorization: 'Bearer ' + token
@@ -320,11 +383,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             showOutput(response.data);
             updatePageNumber();
         } catch (err) {
-            console.log(err);
-            alert('Error: Something went wrong');
+            // console.log(err);
+            failurealert("OOPS !! Something went wrong !!")
+            // alert('Error: Something went wrong');
         }
     }
-    
+
 
     // Function to update the page number and buttons based on the current state
     function updatePageNumber() {
@@ -335,27 +399,27 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
     // Function to show the fetched expenses in the UI
-function showOutput(response) {
-    hasMoreExpenses = response.hasMoreExpenses;
-    hasPreviousExpenses = response.hasPreviousExpenses;
+    function showOutput(response) {
+        hasMoreExpenses = response.hasMoreExpenses;
+        hasPreviousExpenses = response.hasPreviousExpenses;
 
-    // Accumulate expense items
-    const expenseItems = [];
+        // Accumulate expense items
+        const expenseItems = [];
 
-    // Assuming you have a function like addExpenseToUi to display the expenses
-    response.expenses.forEach(expense => {
-        const expenseItem = addExpenseToUi(expense);
-        expenseItems.push(expenseItem);
-    });
+        // Assuming you have a function like addExpenseToUi to display the expenses
+        response.expenses.forEach(expense => {
+            const expenseItem = addExpenseToUi(expense);
+            expenseItems.push(expenseItem);
+        });
 
-    // Append all expense items to the expenseList
-    const expenseList = document.getElementById('expenseList');
-    expenseList.innerHTML = ''; // Clear existing expenses
-    expenseItems.forEach(item => expenseList.appendChild(item));
+        // Append all expense items to the expenseList
+        const expenseList = document.getElementById('expenseList');
+        expenseList.innerHTML = ''; // Clear existing expenses
+        expenseItems.forEach(item => expenseList.appendChild(item));
 
-    // Update the page number and buttons based on the current state
-    updatePageNumber();
-}
+        // Update the page number and buttons based on the current state
+        updatePageNumber();
+    }
 
 
     // Initial load
@@ -382,10 +446,12 @@ async function deleteExpense(button) {
 
         if (response.status !== 200) {
             // Handle the case where the delete request was not successful
-            alert(`Failed to delete expense ${response.status}`);
+            failurealert("Failed to delete expense");
             console.error('Failed to delete expense:', response.status);
             return;
         }
+
+        successalert("Expense deleted successfully");
 
         updateTotalAmount(token);
 
@@ -394,8 +460,9 @@ async function deleteExpense(button) {
 
     }
     catch (err) {
-        console.error('Error deleting expense:', err);
-        alert('Error deleting expense. Please try again.');
+        // console.error('Error deleting expense:', err);
+        failurealert("Error deleting expense, try again");
+        // alert('Error deleting expense. Please try again.');
     }
 }
 
@@ -422,7 +489,9 @@ document.getElementById('buy-premium-btn').onclick = async function (e) {
                 }
             });
 
-            alert("You are a premium user");
+            successalert("You are now a premium user");
+
+            // alert("You are a premium user");
             showPremiumFeature();
 
         },
@@ -441,7 +510,8 @@ document.getElementById('buy-premium-btn').onclick = async function (e) {
                 Authorization: 'Bearer ' + token
             }
         });
-        alert("Something went wrong");
+        failurealert("OOPS!! Something went wrong! Try again!! ")
+        // alert("Something went wrong");
     });
 
 }

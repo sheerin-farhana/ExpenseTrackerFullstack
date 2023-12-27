@@ -4,6 +4,26 @@ const passwordInput = document.querySelector('#password-input');
 const loginBtn = document.querySelector('#login-btn');
 const forgotPasswordBtn = document.getElementById('forgot-password-button');
 
+
+function successalert(msg) {
+    const alertDiv = document.getElementById('success-alert');
+    alertDiv.classList.remove("d-none");
+    alertDiv.innerText = msg
+    setTimeout(() => {
+        alertDiv.classList.add("d-none")
+    }, 4000);
+
+}
+
+function failurealert(msg) {
+    const errorAlertDiv = document.getElementById('failure-alert');
+    errorAlertDiv.classList.remove("d-none");
+    errorAlertDiv.innerText = msg;
+    setTimeout(() => {
+        errorAlertDiv.classList.add("d-none");
+    }, 2000);
+}
+
 const modal = document.getElementById('forgot-password-modal');
 const saveChangesBtn = document.getElementById('save-changes');
         $(saveChangesBtn).on('click', function() {
@@ -29,11 +49,13 @@ forgotPasswordBtn.addEventListener("click", async () => {
         try {
             
             const emailData = await axios.post('http://localhost:3000/password/forgotPassword', { email: emailId.value });
-            console.log(emailData);
-            alert("reset password email Sent");
+            console.log(emailData);//
+            successalert("Reset password email sent");
+            
+            // alert("reset password email Sent");
             
         } catch (error) {
-            console.error(error);
+            failurealert("something went wrong");
         }
     });
 });
@@ -48,27 +70,32 @@ loginBtn.addEventListener('click',async (e) => {
         password: password
     };
 
-    if (email === '' ||password === '') {
-        alert("Enter all fields");
+    if (email === '' || password === '') {
+        failurealert("Enter all fields");
+        // alert("Enter all fields");
     }
     else {
         try {
             const userDetails = await axios.post('http://localhost:3000/users/login', loginData);
 
             if (userDetails.data.success) {
-                alert(userDetails.data.message);
+                successalert(userDetails.data.message);
+                // alert(userDetails.data.message);
                 localStorage.setItem('token', userDetails.data.token);
                 localStorage.setItem('isPremiumUser', userDetails.data.isPremiumUser);
                 window.location.href = '../Expense/expense.html';
             }
             else {
-                alert(userDetails.data.message);
+                failurealert(userDetails.data.message);
+                // alert();
             }
             
         }
         catch (err) {
-            alert("An error occurred. Please try again.");
-            console.log(err);
+            failurealert("An error occurred. Please try again.");
+            
+            // alert("An error occurred. Please try again.");
+            // console.log(err);
         }
     }
 });

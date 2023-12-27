@@ -24,24 +24,29 @@
         <header
             class="fixed-top text-bg-warning h-25 d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start header  " id="header">
             <div class="container">
-                <p class="text-center fs-1 m-0 pr-3 fw-bold" id="expense-logo">ExpenseTracker</p>
+                <p class="text-center fs-1 m-0 pr-3 fw-bold pb-2" id="expense-logo">ExpenseTracker</p>
+                <p class="text-center fw-bold fs-5 text-danger" id="expense-caption">Track your expenses and manage your budget</p>
                 <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start ">
 
 
                     <ul class="nav col-12 col-lg-auto me-lg-auto mb-1 justify-content-center mb-md-0" id="nav-links">
-                        <li><a href="#" class="nav-link px-2 text-black fs-4">Home</a></li>
-                        <li><a href="#" class="nav-link px-2 text-black fs-4">About</a></li>
+                        <li></li>
+                        <li></li>
                     </ul>
                     <div class="text-end mb-4" id="buttons">
-                        <button type="button" class="btn btn-dark ">Login</button>
-                        <button type="button" class="btn btn-success">Sign-up</button>
-                        <button type="button" class="btn btn-danger">Sign-out</button>
+                        <button type="button" class="btn btn-dark " id="nav-login-btn">Login</button>
+                        <!-- <button type="button" class="btn btn-success">Sign-up</button> -->
+                        <!-- <button type="button" class="btn btn-danger">Sign-out</button> -->
                     </div>
                 </div>
             </div>
         </header>
     </nav>
+
+
+
     <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        
         <div class="row border rounded-5 p-3 bg-white shadow box-area">
 
             <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column  left-box" style="background: #103cbe;">
@@ -91,6 +96,18 @@
         </div>
         
     </div>
+
+    <footer class="fixed-bottom">
+        <div class="alert alert-success d-none text-center fw-bold" role="alert" id="success-alert">
+            
+        </div>
+        <div class="alert alert-danger d-none text-center fw-bold" role="alert" id="failure-alert">
+          
+        </div>
+    </footer>
+
+    
+
     
     <script src="./signup.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
